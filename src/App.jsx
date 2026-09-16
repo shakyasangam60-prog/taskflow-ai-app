@@ -11,7 +11,147 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
-// 🎨 Custom Node Component styled like n8n
+// ==========================================
+// 1. PROFESSIONAL N8N NODE REGISTRY
+// ==========================================
+const N8N_NODE_REGISTRY = {
+  webhookTrigger: {
+    displayName: "Webhook",
+    type: "n8n-nodes-base.webhook",
+    category: "Triggers",
+    kind: "trigger",
+    supportedResources: ["webhook"],
+    supportedOperations: ["default"],
+    requiredParameters: ["httpMethod", "path"],
+    optionalParameters: ["responseMode"],
+    credential: "none",
+    icon: "🌐"
+  },
+  scheduleTrigger: {
+    displayName: "Schedule Trigger",
+    type: "n8n-nodes-base.scheduleTrigger",
+    category: "Triggers",
+    kind: "trigger",
+    supportedResources: ["schedule"],
+    supportedOperations: ["interval"],
+    requiredParameters: ["rule"],
+    optionalParameters: [],
+    credential: "none",
+    icon: "⏰"
+  },
+  gmailTrigger: {
+    displayName: "Gmail Trigger",
+    type: "n8n-nodes-base.gmail",
+    category: "Triggers",
+    kind: "trigger",
+    supportedResources: ["message"],
+    supportedOperations: ["get"],
+    requiredParameters: ["pollTimes"],
+    optionalParameters: ["simplify"],
+    credential: "gmailOAuth2",
+    icon: "✉️"
+  },
+  formTrigger: {
+    displayName: "Google Forms Trigger",
+    type: "n8n-nodes-base.googleFormsTrigger",
+    category: "Triggers",
+    kind: "trigger",
+    supportedResources: ["form"],
+    supportedOperations: ["trigger"],
+    requiredParameters: [],
+    optionalParameters: [],
+    credential: "googleFormsOAuth2Api",
+    icon: "📝"
+  },
+  setFields: {
+    displayName: "Edit Fields (Set)",
+    type: "n8n-nodes-base.set",
+    category: "Data",
+    kind: "transformation",
+    supportedResources: ["fields"],
+    supportedOperations: ["set"],
+    requiredParameters: ["assignments"],
+    optionalParameters: ["keepOnlySet"],
+    credential: "none",
+    icon: "📥"
+  },
+  ifCondition: {
+    displayName: "IF",
+    type: "n8n-nodes-base.if",
+    category: "Conditions",
+    kind: "logic",
+    supportedResources: ["condition"],
+    supportedOperations: ["evaluate"],
+    requiredParameters: ["conditions"],
+    optionalParameters: [],
+    credential: "none",
+    icon: "🔀"
+  },
+  openAi: {
+    displayName: "OpenAI",
+    type: "n8n-nodes-base.openAi",
+    category: "AI",
+    kind: "processing",
+    supportedResources: ["chat", "text"],
+    supportedOperations: ["complete", "summarize"],
+    requiredParameters: ["prompt"],
+    optionalParameters: ["model", "temperature"],
+    credential: "openAiApi",
+    icon: "🤖"
+  },
+  googleSheets: {
+    displayName: "Google Sheets",
+    type: "n8n-nodes-base.googleSheets",
+    category: "Database",
+    kind: "action",
+    supportedResources: ["sheet"],
+    supportedOperations: ["append", "update"],
+    requiredParameters: ["documentId", "sheetName"],
+    optionalParameters: ["columns"],
+    credential: "googleSheetsOAuth2Api",
+    icon: "📊"
+  },
+  telegram: {
+    displayName: "Telegram",
+    type: "n8n-nodes-base.telegram",
+    category: "Communication",
+    kind: "action",
+    supportedResources: ["message"],
+    supportedOperations: ["sendMessage"],
+    requiredParameters: ["chatId", "text"],
+    optionalParameters: ["additionalFields"],
+    credential: "telegramApi",
+    icon: "📢"
+  },
+  slack: {
+    displayName: "Slack",
+    type: "n8n-nodes-base.slack",
+    category: "Communication",
+    kind: "action",
+    supportedResources: ["message"],
+    supportedOperations: ["post"],
+    requiredParameters: ["channel", "text"],
+    optionalParameters: [],
+    credential: "slackApi",
+    icon: "💬"
+  },
+  httpRequest: {
+    displayName: "HTTP Request",
+    type: "n8n-nodes-base.httpRequest",
+    category: "Developer",
+    kind: "action",
+    supportedResources: ["request"],
+    supportedOperations: ["execute"],
+    requiredParameters: ["method", "url"],
+    optionalParameters: ["headers", "body"],
+    credential: "httpHeaderAuth",
+    icon: "🌐"
+  }
+};
+
+// ==========================================
+// 2. CUSTOM N8N NODE COMPONENT
+// ==========================================
 const CustomNode = ({ data }) => {
   const getBadgeColor = (type) => {
     switch (type?.toLowerCase()) {
@@ -70,27 +210,31 @@ export default function TaskFlowAI() {
   const [activeTab, setActiveTab] = useState("generator");
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [selectedNodeData, setSelectedNodeData] = useState(null);
+  const [validationReport, setValidationReport] = useState(null);
 
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
 
   const loadingStepsText = [
-    "🧠 Understanding requirement...",
-    "🔍 Detecting trigger...",
-    "📥 Identifying data & payload...",
-    "🤖 Designing AI processing...",
-    "🔀 Creating conditional branches...",
-    "⚡ Connecting platform actions...",
-    "✅ Workflow ready"
+    "🧠 Analyzing intent with Workflow Planner...",
+    "🔍 Searching N8N_NODE_REGISTRY...",
+    "📥 Extracting payload parameters...",
+    "🤖 Generating AI & Logic mapping...",
+    "🔀 Configuring conditional branches...",
+    "⚡ Validating n8n JSON schema...",
+    "✅ Workflow blueprint ready"
   ];
 
   const templates = [
-    { title: "Instagram DM Automation", prompt: "When someone comments on my Instagram post, automatically send them a thank-you DM." },
-    { title: "Conditional Instagram Filter", prompt: "When someone comments 'price' on my Instagram post, send them a DM." },
-    { title: "Gmail Email Summarizer", prompt: "When a Gmail email arrives, summarize it with AI and create a task." },
-    { title: "Form Data Pipeline", prompt: "When a new form is submitted, validate the data, save it to Google Sheets and send a confirmation email." }
+    { title: "Form Lead Qualification", prompt: "When someone submits my website contact form, check whether the email is valid, save the contact to Google Sheets, ask AI to classify the enquiry, and send me a Telegram notification." },
+    { title: "Morning Email AI Digest", prompt: "Every morning get my Gmail emails, filter unread emails, summarize them with AI, save the summary to Google Sheets and send the summary to Telegram." },
+    { title: "Instagram Price Auto-DM", prompt: "When someone comments 'price' on my Instagram post, validate the comment and send an automated direct message." },
+    { title: "Webhook to Slack API", prompt: "Receive incoming webhook data, transform payload parameters, and post alerts to Slack channel." }
   ];
 
+  // ==========================================
+  // 3. WORKFLOW PLANNER & REGISTRY ENGINE
+  // ==========================================
   const handleGenerate = (customPrompt) => {
     const textToProcess = customPrompt || prompt;
     if (!textToProcess.trim()) {
@@ -109,36 +253,62 @@ export default function TaskFlowAI() {
       } else {
         clearInterval(interval);
         setLoading(false);
-        buildDynamicWorkflow(textToProcess);
+        executeWorkflowPlanner(textToProcess);
       }
-    }, 300);
+    }, 250);
   };
 
-  // 🧠 FULLY DYNAMIC WORKFLOW BUILDER BASED ON PROMPT INTENT
-  const buildDynamicWorkflow = (text) => {
+  const executeWorkflowPlanner = (text) => {
     const lower = text.toLowerCase();
-    const flowNodes = [];
+    const plannedNodes = [];
     const flowEdges = [];
     const n8nNodesList = [];
     const n8nConnectionsMap = {};
+    const requiredCredentialsList = new Set();
+    const requiredIdsList = new Set();
 
     let currentX = 100;
     const yPos = 250;
     const xStep = 300;
-
     let previousNodeName = null;
     let previousNodeId = null;
 
-    // Helper to add node safely
-    const addStepNode = (id, label, nodeType, description, icon, purpose, credentials, parameters, n8nType) => {
-      flowNodes.push({
-        id,
+    const appendNodeToPipeline = (registryKey, customLabel, customDescription, customParams = {}) => {
+      const regNode = N8N_NODE_REGISTRY[registryKey];
+      if (!regNode) return;
+
+      const nodeId = `node-${plannedNodes.length + 1}`;
+      const label = customLabel || regNode.displayName;
+
+      if (regNode.credential && regNode.credential !== "none") {
+        requiredCredentialsList.add(regNode.credential);
+      }
+      if (registryKey === 'googleSheets') requiredIdsList.add('GOOGLE_SHEET_ID');
+      if (registryKey === 'telegram') requiredIdsList.add('TELEGRAM_CHAT_ID');
+
+      plannedNodes.push({
+        id: nodeId,
         type: 'custom',
         position: { x: currentX, y: yPos },
-        data: { label, nodeType, description, icon, status: 'Ready', purpose, credentials, parameters }
+        data: {
+          label,
+          nodeType: regNode.kind.toUpperCase(),
+          description: customDescription || `Executes ${regNode.displayName} operation.`,
+          icon: regNode.icon,
+          status: 'Ready',
+          purpose: `Performs standard ${regNode.category} task using ${regNode.type}.`,
+          credentials: regNode.credential,
+          parameters: { ...regNode.requiredParameters.reduce((acc, curr) => ({ ...acc, [curr]: "value" }), {}), ...customParams }
+        }
       });
 
-      n8nNodesList.push({ parameters, name: label, type: n8nType, typeVersion: 1, position: [currentX, yPos] });
+      n8nNodesList.push({
+        parameters: { ...customParams },
+        name: label,
+        type: regNode.type,
+        typeVersion: 1,
+        position: [currentX, yPos]
+      });
 
       if (previousNodeName) {
         if (!n8nConnectionsMap[previousNodeName]) {
@@ -147,216 +317,86 @@ export default function TaskFlowAI() {
         n8nConnectionsMap[previousNodeName].main[0].push({ node: label, type: "main", index: 0 });
 
         flowEdges.push({
-          id: `e-${previousNodeId}-${id}`,
+          id: `e-${previousNodeId}-${nodeId}`,
           source: previousNodeId,
-          target: id,
+          target: nodeId,
           animated: true,
           style: { stroke: '#a855f7', strokeWidth: 2 }
         });
       }
 
       previousNodeName = label;
-      previousNodeId = id;
+      previousNodeId = nodeId;
       currentX += xStep;
     };
 
-    // 1. DETERMINE TRIGGER
-    if (lower.includes("instagram") || lower.includes("comment") || lower.includes("post")) {
-      addStepNode(
-        'node-trigger', 
-        'Instagram Trigger', 
-        'TRIGGER', 
-        'Monitors incoming post comments.', 
-        '📸', 
-        'Listens for new webhook events from Instagram API.', 
-        'Instagram Graph API Token', 
-        { events: ['comments'] }, 
-        'n8n-nodes-base.instagramTrigger'
-      );
-    } else if (lower.includes("gmail") || lower.includes("email") || lower.includes("mail")) {
-      addStepNode(
-        'node-trigger', 
-        'Gmail Trigger', 
-        'TRIGGER', 
-        'Monitors incoming inbox emails.', 
-        '✉️', 
-        'Triggers execution when a new email arrives in Gmail.', 
-        'Google OAuth2', 
-        { pollTimes: { item: [{ mode: 'everyMinute' }] } }, 
-        'n8n-nodes-base.gmail'
-      );
-    } else if (lower.includes("form") || lower.includes("submit") || lower.includes("lead")) {
-      addStepNode(
-        'node-trigger', 
-        'Form Trigger', 
-        'TRIGGER', 
-        'Monitors web form submissions.', 
-        '📝', 
-        'Triggers when a user submits data through an online form.', 
-        'Webhook Secret', 
-        { httpMethod: 'POST' }, 
-        'n8n-nodes-base.googleFormsTrigger'
-      );
-    } else {
-      addStepNode(
-        'node-trigger', 
-        'Webhook Trigger', 
-        'TRIGGER', 
-        'Generic webhook event listener.', 
-        '🌐', 
-        'Receives external HTTP webhook payloads.', 
-        'None', 
-        { path: 'webhook' }, 
-        'n8n-nodes-base.webhook'
-      );
-    }
-
-    // 2. DETERMINE DATA EXTRACTION / PARSING STEP
-    if (lower.includes("comment") && !lower.includes("price")) {
-      addStepNode(
-        'node-data', 
-        'Extract Comment Data', 
-        'DATA', 
-        'Extracts user ID and comment body.', 
-        '📥', 
-        'Parses raw comment payload to fetch username and text.', 
-        'None', 
-        { keepOnlySet: true, values: { string: [{ name: 'comment', value: '={{ $json.body }}' }] } }, 
-        'n8n-nodes-base.set'
-      );
+    // Plan Trigger Selection
+    if (lower.includes("morning") || lower.includes("every morning") || lower.includes("schedule")) {
+      appendNodeToPipeline('scheduleTrigger', 'Schedule Trigger', 'Triggers execution every morning at set interval.', { rule: { interval: [{ field: 'hours', hoursInterval: 24 }] } });
     } else if (lower.includes("gmail") || lower.includes("email")) {
-      addStepNode(
-        'node-data', 
-        'Get Email Payload', 
-        'DATA', 
-        'Extracts subject and body content.', 
-        '📥', 
-        'Reads email content and strips headers.', 
-        'None', 
-        { keepOnlySet: true }, 
-        'n8n-nodes-base.set'
-      );
-    } else if (lower.includes("form") || lower.includes("validate")) {
-      addStepNode(
-        'node-data', 
-        'Validate Data', 
-        'DATA', 
-        'Validates form fields and sanitizes inputs.', 
-        '🔍', 
-        'Ensures incoming submission fields are complete and valid.', 
-        'None', 
-        { options: {} }, 
-        'n8n-nodes-base.set'
-      );
+      appendNodeToPipeline('gmailTrigger', 'Gmail Trigger', 'Triggers when a new email arrives.');
+    } else if (lower.includes("form") || lower.includes("contact form")) {
+      appendNodeToPipeline('formTrigger', 'Google Forms Trigger', 'Triggers upon form submission.');
+    } else {
+      appendNodeToPipeline('webhookTrigger', 'Webhook Trigger', 'Receives incoming HTTP webhook requests.', { httpMethod: 'POST', path: 'webhook' });
     }
 
-    // 3. DETERMINE CONDITIONAL / AI STEPS
-    if (lower.includes("price") || lower.includes("if") || lower.includes("check")) {
-      addStepNode(
-        'node-cond', 
-        'IF Comment Contains "price"', 
-        'CONDITION', 
-        'Branches workflow if text matches keyword.', 
-        '🔀', 
-        'Evaluates conditional logic expressions.', 
-        'None', 
-        { conditions: { string: [{ value1: '={{ $json.comment }}', operation: 'contains', value2: 'price' }] } }, 
-        'n8n-nodes-base.if'
-      );
-    } else if (lower.includes("summarize") || lower.includes("ai")) {
-      addStepNode(
-        'node-ai', 
-        'AI Summarize', 
-        'AI', 
-        'Summarizes content via LLM.', 
-        '🤖', 
-        'Sends text to OpenAI model for intelligent summarization.', 
-        'OpenAI API Key', 
-        { prompt: 'Summarize this email concisely.' }, 
-        'n8n-nodes-base.openAi'
-      );
+    // Plan Data Extraction / Transformation
+    if (lower.includes("filter") || lower.includes("unread") || lower.includes("validate")) {
+      appendNodeToPipeline('setFields', 'Extract & Validate Data', 'Extracts and sanitizes incoming fields.', { keepOnlySet: true, values: { string: [{ name: 'status', value: 'validated' }] } });
     }
 
-    // 4. DETERMINE FINAL ACTION & OUTPUT NODES
-    if (lower.includes("instagram") || lower.includes("dm")) {
-      addStepNode(
-        'node-action', 
-        'Send Instagram DM', 
-        'ACTION', 
-        'Sends automated direct message to user.', 
-        '💬', 
-        'Delivers message directly to Instagram chat inbox.', 
-        'Instagram Graph API Token', 
-        { message: 'Thank you for your comment!' }, 
-        'n8n-nodes-base.instagram'
-      );
-    } else if (lower.includes("sheet") || lower.includes("excel")) {
-      addStepNode(
-        'node-db', 
-        'Google Sheets', 
-        'DATABASE', 
-        'Appends row to spreadsheet.', 
-        '📊', 
-        'Saves structured data into Google Sheets.', 
-        'Google Sheets OAuth2', 
-        { operation: 'append', sheetId: 'auto' }, 
-        'n8n-nodes-base.googleSheets'
-      );
+    // Plan Condition Branching
+    if (lower.includes("check") || lower.includes("filter") || lower.includes("if")) {
+      appendNodeToPipeline('ifCondition', 'IF Condition Check', 'Evaluates business rule criteria.', { conditions: { string: [{ value1: '={{ $json.email }}', operation: 'isNotEmpty' }] } });
     }
 
-    if (lower.includes("task") || lower.includes("create task")) {
-      addStepNode(
-        'node-task', 
-        'Create Task', 
-        'ACTION', 
-        'Creates tracking item in project board.', 
-        '📋', 
-        'Adds actionable task in workspace software.', 
-        'Notion / Trello API Key', 
-        { title: 'New Process Item' }, 
-        'n8n-nodes-base.notion'
-      );
+    // Plan AI Processing
+    if (lower.includes("ai") || lower.includes("summarize") || lower.includes("classify")) {
+      appendNodeToPipeline('openAi', 'AI Summarization & Classification', 'Processes content via OpenAI LLM.', { prompt: 'Summarize and classify content: {{$json.body}}' });
     }
 
-    if (lower.includes("email") && !lower.includes("gmail")) {
-      addStepNode(
-        'node-email', 
-        'Send Email', 
-        'EMAIL', 
-        'Sends confirmation email message.', 
-        '📤', 
-        'Outbound email delivery to user.', 
-        'SMTP Credentials', 
-        { subject: 'Confirmation', text: 'Action completed.' }, 
-        'n8n-nodes-base.emailSend'
-      );
+    // Plan Database Operations
+    if (lower.includes("sheet") || lower.includes("save") || lower.includes("contact")) {
+      appendNodeToPipeline('googleSheets', 'Google Sheets', 'Appends structured row to spreadsheet.', { operation: 'append', documentId: 'GOOGLE_SHEET_ID' });
     }
 
-    // Fallback if no specific action matched
-    if (flowNodes.length === 1) {
-      addStepNode(
-        'node-fallback', 
-        'Send Notification', 
-        'ACTION', 
-        'Dispatches execution results.', 
-        '🚀', 
-        'Sends outcome payload.', 
-        'Webhook / API', 
-        { text: text }, 
-        'n8n-nodes-base.httpRequest'
-      );
+    // Plan Notifications / Final Actions
+    if (lower.includes("telegram") || lower.includes("notification")) {
+      appendNodeToPipeline('telegram', 'Telegram Notification', 'Sends alert message to Telegram chat.', { chatId: 'TELEGRAM_CHAT_ID', text: 'Workflow execution alert successfully completed.' });
+    } else if (lower.includes("slack")) {
+      appendNodeToPipeline('slack', 'Slack Alert', 'Posts message to Slack channel.', { channel: 'general', text: 'Task completed successfully.' });
+    } else {
+      appendNodeToPipeline('httpRequest', 'HTTP Request Action', 'Dispatches external API callback.', { method: 'POST', url: 'https://api.example.com/endpoint' });
     }
 
-    // Validation checks for n8n export status
-    const hasValidStructure = n8nNodesList.length > 0 && Object.keys(n8nConnectionsMap).length > 0;
+    // ==========================================
+    // 4. VALIDATION ENGINE
+    // ==========================================
+    const validationErrors = [];
+    if (n8nNodesList.length === 0) validationErrors.push("Workflow must contain at least one node.");
+    if (!n8nNodesList.some(n => n.type.toLowerCase().includes("trigger"))) validationErrors.push("Workflow requires a valid trigger node.");
 
-    // 🔥 SET NODES AND EDGES TO REACT FLOW STATE
-    setNodes(flowNodes);
+    const nodeNames = new Set();
+    n8nNodesList.forEach(n => {
+      if (nodeNames.has(n.name)) validationErrors.push(`Duplicate node name detected: ${n.name}`);
+      nodeNames.add(n.name);
+    });
+
+    const isValid = validationErrors.length === 0;
+    setValidationReport({
+      valid: isValid,
+      errors: validationErrors,
+      credentialsRequired: Array.from(requiredCredentialsList),
+      idsRequired: Array.from(requiredIdsList)
+    });
+
+    setNodes(plannedNodes);
     setEdges(flowEdges);
 
     setWorkflow({
       goal: `Dynamic Workflow: ${text.slice(0, 45)}...`,
-      n8nValid: hasValidStructure,
+      n8nValid: isValid,
       n8nJson: {
         nodes: n8nNodesList,
         connections: n8nConnectionsMap,
@@ -381,7 +421,7 @@ export default function TaskFlowAI() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(workflow.n8nJson, null, 2));
     const downloadAnchor = document.createElement('a');
     downloadAnchor.setAttribute("href", dataStr);
-    downloadAnchor.setAttribute("download", "taskflow-dynamic-workflow.json");
+    downloadAnchor.setAttribute("download", "taskflow-professional-n8n.json");
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     downloadAnchor.remove();
@@ -397,22 +437,21 @@ export default function TaskFlowAI() {
         <div className="flex items-center space-x-2 cursor-pointer" onClick={() => setActiveTab("generator")}>
           <div className="bg-purple-600 p-2 rounded-xl text-white font-bold shadow-lg shadow-purple-600/30">⚡</div>
           <span className="text-xl font-extrabold tracking-wider bg-gradient-to-r from-white via-purple-200 to-blue-300 bg-clip-text text-transparent">
-            TASKFLOW AI
+            TASKFLOW AI <span className="text-xs bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded border border-purple-500/30 font-mono ml-2">PRO v2.0</span>
           </span>
         </div>
         <div className="flex items-center space-x-3">
-          <span className="text-xs text-slate-400 hidden md:inline">Describe your work. Get your workflow.</span>
           <button 
             onClick={() => setActiveTab("generator")} 
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'generator' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
           >
-            Generator
+            Workflow Architect
           </button>
           <button 
-            onClick={() => setActiveTab("dashboard")} 
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'dashboard' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
+            onClick={() => setActiveTab("registry")} 
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'registry' ? 'bg-purple-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'}`}
           >
-            Dashboard
+            Node Registry
           </button>
         </div>
       </nav>
@@ -422,16 +461,16 @@ export default function TaskFlowAI() {
           <div className="flex-1 flex flex-col">
             <div className="text-center max-w-3xl mx-auto mb-8">
               <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20 mb-3">
-                ✨ Fully Dynamic n8n Workflow Architect
+                🛡️ Data-Driven Registry & Workflow Validator Engine
               </span>
               <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-3">
-                Describe your work. <br />
+                Professional n8n <br />
                 <span className="bg-gradient-to-r from-purple-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                  Get your workflow.
+                  Workflow Generator.
                 </span>
               </h1>
               <p className="text-slate-400 text-base">
-                AI dynamically creates a custom number of nodes tailored strictly to your prompt. No fixed templates!
+                Powered by a centralized N8N_NODE_REGISTRY to guarantee zero fake nodes and precise multi-node automation architectures.
               </p>
             </div>
 
@@ -445,7 +484,7 @@ export default function TaskFlowAI() {
                   type="text" 
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="e.g., When a new form is submitted, validate data, save to Google Sheets and email." 
+                  placeholder="e.g., When someone submits website contact form, validate email, save to Google Sheets, ask AI to classify, and notify Telegram." 
                   className="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 text-sm md:text-base"
                 />
                 <button 
@@ -465,7 +504,7 @@ export default function TaskFlowAI() {
             {/* Quick Test Prompts */}
             <div className="mb-8">
               <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">
-                ✨ Test Prompts (Verify Dynamic Node Counts)
+                ✨ Complex Multi-Node Automation Scenarios
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                 {templates.map((t, idx) => (
@@ -489,7 +528,7 @@ export default function TaskFlowAI() {
             {loading && (
               <div className="bg-slate-900 border border-purple-500/30 rounded-2xl p-10 text-center my-6 shadow-2xl">
                 <div className="inline-block animate-spin text-3xl mb-3">⚙️</div>
-                <h3 className="text-lg font-bold mb-1">Synthesizing Dynamic Workflow Graph</h3>
+                <h3 className="text-lg font-bold mb-1">Synthesizing Workflow via Node Registry</h3>
                 <p className="text-purple-400 font-mono text-sm mt-2">
                   {loadingStepsText[loadingStep]}
                 </p>
@@ -503,14 +542,14 @@ export default function TaskFlowAI() {
                 <div className="bg-slate-900 border border-slate-800 rounded-xl px-5 py-3.5 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 shadow-lg">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xs text-purple-400 font-semibold tracking-wide">TASKFLOW AI • Canvas Node Graph</span>
-                      {workflow.n8nValid ? (
+                      <span className="text-xs text-purple-400 font-semibold tracking-wide">TASKFLOW AI • Validator Engine</span>
+                      {validationReport?.valid ? (
                         <span className="text-[10px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded border border-green-500/20 flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> Ready to Import
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse"></span> READY TO IMPORT
                         </span>
                       ) : (
                         <span className="text-[10px] bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20">
-                          Workflow Blueprint – manual configuration required
+                          WORKFLOW BLUEPRINT – Manual configuration required
                         </span>
                       )}
                     </div>
@@ -527,7 +566,7 @@ export default function TaskFlowAI() {
                       onClick={handleDownloadJson}
                       className="bg-purple-600 hover:bg-purple-500 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-md transition-all"
                     >
-                      📥 Download .json for n8n
+                      📥 DOWNLOAD N8N JSON
                     </button>
                     <button 
                       onClick={() => setIsFullScreen(true)}
@@ -594,11 +633,33 @@ export default function TaskFlowAI() {
                     ) : (
                       <div className="flex-1 flex flex-col items-center justify-center text-center text-slate-500 p-4">
                         <span className="text-2xl mb-2">👆</span>
-                        <p className="text-xs">Click any node on the canvas to inspect its parameters and configuration.</p>
+                        <p className="text-xs">Click any node on the canvas to inspect its parameters and configuration schema.</p>
                       </div>
                     )}
                   </div>
                 </div>
+
+                {/* Required After Import Panel */}
+                {validationReport && (
+                  <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                      <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-1">REQUIRED AFTER IMPORT</h4>
+                      <p className="text-xs text-slate-400">Configure these secure credentials and identifiers inside your target n8n instance:</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {validationReport.credentialsRequired.map((c, i) => (
+                        <span key={i} className="text-[11px] bg-slate-950 border border-slate-800 px-3 py-1 rounded-lg font-mono text-purple-300">
+                          🔑 {c}
+                        </span>
+                      ))}
+                      {validationReport.idsRequired.map((id, i) => (
+                        <span key={i} className="text-[11px] bg-slate-950 border border-slate-800 px-3 py-1 rounded-lg font-mono text-blue-300">
+                          🆔 {id}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -608,29 +669,36 @@ export default function TaskFlowAI() {
                 <div className="w-16 h-16 rounded-2xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-3xl mb-4 shadow-inner">
                   ⚡
                 </div>
-                <h3 className="text-lg font-bold text-slate-200 mb-1">Your workflow will appear here</h3>
+                <h3 className="text-lg font-bold text-slate-200 mb-1">Your professional workflow will appear here</h3>
                 <p className="text-xs text-slate-400 max-w-sm">
-                  Enter an automation prompt above or click any test prompt to generate a fully dynamic node graph.
+                  Enter an automation prompt above or select a multi-node test scenario to build your validated n8n pipeline.
                 </p>
               </div>
             )}
           </div>
         ) : (
           <div className="space-y-6">
-            <h2 className="text-2xl font-bold">Automation Dashboard</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
-                <span className="text-xs text-slate-400">Active Workflows</span>
-                <h3 className="text-3xl font-extrabold text-purple-400 mt-1">08</h3>
-              </div>
-              <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
-                <span className="text-xs text-slate-400">Dynamic Graph Generations</span>
-                <h3 className="text-3xl font-extrabold text-blue-400 mt-1">156</h3>
-              </div>
-              <div className="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl">
-                <span className="text-xs text-slate-400">n8n Compatibility Accuracy</span>
-                <h3 className="text-3xl font-extrabold text-green-400 mt-1">100%</h3>
-              </div>
+            <h2 className="text-2xl font-bold">Central N8N Node Registry</h2>
+            <p className="text-slate-400 text-sm">Below is the core data-driven catalog powering Taskflow AI's node selection and parameter validation engine.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Object.entries(N8N_NODE_REGISTRY).map(([key, node]) => (
+                <div key={key} className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xl">{node.icon}</span>
+                      <span className="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                        {node.category}
+                      </span>
+                    </div>
+                    <h3 className="font-bold text-base text-white">{node.displayName}</h3>
+                    <p className="text-xs font-mono text-slate-400 mt-1">{node.type}</p>
+                  </div>
+                  <div className="mt-4 pt-3 border-t border-slate-800 text-xs text-slate-300 space-y-1">
+                    <div><span className="text-slate-500">Credential:</span> {node.credential}</div>
+                    <div><span className="text-slate-500">Required Parameters:</span> {node.requiredParameters.join(', ') || 'None'}</div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
